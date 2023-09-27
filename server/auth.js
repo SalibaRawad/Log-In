@@ -1,12 +1,13 @@
 const jwt = require("jsonwebtoken");
 
-module.exports = async (req, res, next) => {
+module.exports = (req, res, next) => {
   try {
-    //get the token from the auhtorization header
     const token = req.headers.authorization.split(" ")[1];
+    console.log(token);
+    //get the token from the auhtorization header
 
     //check if the token matches the original token
-    const decodedToken = await jwt.verify(token, "RANDOM-TOKEN");
+    const decodedToken = jwt.verify(token, "secret");
 
     //retrieve the user details of the loggedin user
     const user = decodedToken;
@@ -17,8 +18,6 @@ module.exports = async (req, res, next) => {
     //passdown the fucntionality to the endpoint
     next();
   } catch (error) {
-    res.status(401).send({
-      error: new Error("Invalid request!"),
-    });
+    res.status(401).send("Invalid request!");
   }
 };

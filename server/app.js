@@ -8,7 +8,11 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 //nodemailer is used to send emails (forgot password)
 const nodemailer = require("nodemailer");
+const logger = require("morgan");
 const auth = require("./auth");
+
+const dotenv = require("dotenv");
+dotenv.config();
 
 //require database connection
 const dbConnect = require("./db/dbConnection");
@@ -38,6 +42,7 @@ app.use((req, res, next) => {
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(logger("combined"));
 
 // Start the server
 // app.listen(port, () => {
@@ -71,8 +76,8 @@ app.post("/login", (req, res) => {
               userId: user._id,
               userEmail: user.email,
             },
-            "TOKEN",
-            { expiresIn: "24h" }
+            process.env.SECRET_KEY,
+            { expiresIn: "10d" }
           );
 
           //   return success res
@@ -141,7 +146,7 @@ app.post("/register", async (req, res) => {
 });
 
 app.get("/auth-endpoint", auth, (req, res) => {
-  res.json({ message: "You are authorized to access me" });
+  res.status(200).send("Welcome 🙌 ");
 });
 
 app.post("/forgot-password", (req, res) => {
@@ -150,7 +155,9 @@ app.post("/forgot-password", (req, res) => {
     if (!user) {
       return res.send({ Status: "Email not found" });
     }
-    const token = jwt.sign({ id: user._id }, "TOKEN", { expiresIn: "1d" });
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, {
+      expiresIn: "10d",
+    });
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -180,7 +187,7 @@ app.post("/reset-password/:id/:token", (req, res) => {
   const { id, token } = req.params;
   const { password } = req.body;
 
-  jwt.verify(token, "TOKEN", (err, decoded) => {
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
       return res.send({ Status: "Token not valid" });
     } else {
@@ -202,6 +209,8 @@ app.post("/reset-password/:id/:token", (req, res) => {
   });
 });
 
-app.get("/profile", (req, res) => {});
+app.get("/profile", auth, (req, res) => {
+  console.log("hello");
+});
 
 module.exports = app;
