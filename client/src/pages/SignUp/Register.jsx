@@ -34,7 +34,7 @@ const Register = () => {
     } else {
       setIsEmailFilled(false);
     }
-    if (!isValidEmail(event.target.value)) {
+    if (!isValidEmail(e.target.value)) {
       setError("Email is invalid");
     } else {
       setError(null);

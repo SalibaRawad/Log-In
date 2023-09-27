@@ -93,7 +93,7 @@ const Profile = () => {
 
   return (
     <div className="h-screen flex items-center justify-center bg-[#4070f4]">
-      <div className="w-4/5 h-2/3 sm:w-1/4 sm:h-1/2  rounded-md  bg-slate-100  border-2 min-h-0 ">
+      <div className="w-4/5 h-2/3 sm:w-1/4 sm:h-1/2  rounded-md  bg-slate-100  border-2 min-h-[450px] ">
         <form onSubmit={(e) => handleSubmit(e)}>
           <h1 className="text-3xl p-4 font-poppins font-bold">
             Update profile
